@@ -80,7 +80,7 @@ makes it impossible to clean up an unknown amount of parameters from stack.
 About `DllMarshalAsAttribute`
 -----------------------------
 This attribute replaces .NETs `MarshalAsAttribute` and behaves in the same way.
-It's necessary since `MarshalAsAttribute` is not persistent like any other
+It's necessary since `MarshalAsAttribute` is not persisted like any other
 custom attribute and therefore cannot be properly reflected (using .NET's
 reflection API). For further information have a look at:
 http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.marshalasattribute.aspx
@@ -123,7 +123,7 @@ malfunction.
 Integrating into `msbuild` (project files)
 ------------------------------------------
 Usually you want your build process to be smarter than just calling a simple
-after-built command. In addition you may have multiple projects in solution
+after-built command. In addition you may have multiple projects in a solution
 file that need to be made available to unmanaged code. To facilitate this, add
 the following either to a certain project file or to a common target file:
 
