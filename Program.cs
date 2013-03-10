@@ -244,9 +244,8 @@ namespace Aufbauwerk.Tools.NativeNET
 
                 //NOTE: mscorlib will always be the current process's version, or in other words:
                 //      ReflectionOnlyLoad ignores anything after mscorlib and returns the current one.
-                //      It's also the one library that ilasm includes without a reference, therefore
-                //      it's written as-is to ensure it's the same runtime version as ilasm, i.e.
-                //      the requiredRuntime.
+                //      Ilasm will resolve mscorlib automatically therefore it's written as-is to
+                //      ensure it's the same runtime version as ilasm, i.e. the requiredRuntime.
                 writer.Write(" [");
                 if (type.Assembly != typeof(RuntimeEnvironment).Assembly)
                 {
@@ -561,7 +560,7 @@ namespace Aufbauwerk.Tools.NativeNET
                 writer.Write(")");
             }
 
-            // if the assembly is not culture natural, also include the culture here
+            // if the assembly is not culture neutral, also include the culture
             string culture = assemblyName.CultureInfo.Name;
             if (!string.IsNullOrEmpty(culture))
             {
@@ -569,10 +568,6 @@ namespace Aufbauwerk.Tools.NativeNET
                 WriteEscapedString(writer, culture);
             }
             writer.Write(" }");
-
-            // TODO: The fully qualified name of an assembly also includes the platform.
-            //       However, the input assemblies should always be platform agnostic since
-            //       the architecture will be determined by the host application.
         }
 
         static void WriteMethod(TextWriter writer, Dictionary<Assembly, string> assemblyAliases, MethodInfo method, ushort ordinal, string name)
@@ -641,13 +636,13 @@ namespace Aufbauwerk.Tools.NativeNET
             WriteEscapedString(writer, name);
 
             // TODO: We always specify the version as 1.0 which seems odd. However, since
-            //       we allow multiple input assemblies we cannot infer a signle version
+            //       we allow multiple input assemblies we cannot infer a single version
             //       number. One other possibility might be to set the version to this
-            //       programs version.
+            //       program's version.
             writer.Write(" { .ver 1:0:0:0 .hash algorithm 0x00008004 }");
             writer.WriteLine();
 
-            // write the module name (the simple name of the assembly)
+            // write the module name (which is the dll file name)
             writer.Write(".module ");
             WriteEscapedString(writer, moduleName);
             writer.WriteLine();
@@ -683,12 +678,12 @@ namespace Aufbauwerk.Tools.NativeNET
                     writer.Write(memWriter);
                 }
 
-                // append the file name to ilasm parameters
+                // append the file name to ilasm's parameters
                 cmdLine.Append(" \"");
                 cmdLine.Append(fileName);
                 cmdLine.Append("\"");
 
-                // create the start information (redirect ilasm outputs to our console)
+                // create the start information (redirect ilasm output to our console)
                 ProcessStartInfo startInfo = new ProcessStartInfo();
                 startInfo.FileName = GetAssemblerPathForRuntime(requiredRuntime);
                 startInfo.Arguments = cmdLine.ToString();
@@ -720,14 +715,14 @@ namespace Aufbauwerk.Tools.NativeNET
                     if (arg.Length == 0)
                         continue;
 
-                    // check if the next argument is an input assembly or and (ilasm) parameter
+                    // check if the next argument is an input assembly or an (ilasm) parameter
                     if (arg[0] == '/')
                     {
                         // handle flags and parameters differently
                         int separator = arg.IndexOfAny(new char[] { ':', '=' }, 1);
                         if (separator >= 4)
                         {
-                            // handle each recogniced paremeter
+                            // handle each recognized paremeter
                             string value = arg.Substring(separator + 1).Trim();
                             switch (arg.Substring(1, 3).ToUpperInvariant())
                             {
@@ -743,12 +738,12 @@ namespace Aufbauwerk.Tools.NativeNET
                         }
                         else if (separator == -1 && arg.Length >= 4)
                         {
-                            // handle each recogniced flag
+                            // handle each recognized flag
                             switch (arg.Substring(1, 3).ToUpperInvariant())
                             {
                                 case "X86":
-                                    // in addition to ilasm's /x64 we also support /x86, but since this is ilasm's
-                                    // default value we simply ingore it
+                                    // in addition to ilasm's /x64 we also support /x86
+                                    // but since this is ilasm's default value we simply ingore it
                                     continue;
                             }
                         }
