@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{0F0BFCFA-A9B9-4888-B501-15A55F49102F}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -47,5 +47,5 @@
     <None Include="NativeNET.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)$(SolutionName).target" Condition="Exists('$(SolutionDir)$(SolutionName).target')" />
+  <Import Project="$(SolutionDir)$(SolutionName).targets" Condition="Exists('$(SolutionDir)$(SolutionName).targets')" />
 </Project>
